@@ -16,7 +16,7 @@ const columns = [
     header: "",
     cell: (info) => info.row.index + 1,
     meta: {
-      className: "relative",
+      className: "group relative w-12",
     },
   }),
   columnHelper.accessor("company", {

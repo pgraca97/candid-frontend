@@ -12,3 +12,14 @@ export type Application = {
     name: string
   }
 }
+
+export type Company = {
+  name: string;
+  description?: string;
+  logoUrl?: string;
+  website?: string;
+  location?: string;
+  industry?: string;
+  companySize?: string;
+  notes?: string;
+}

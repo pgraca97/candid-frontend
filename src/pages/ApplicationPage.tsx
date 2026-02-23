@@ -22,7 +22,7 @@ const ApplicationPage = () => {
   return (
     <>
       <h1>Application Page</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      <pre>{JSON.stringify(data, null, 20)}</pre>
       <button
         type="button"
         onClick={() =>

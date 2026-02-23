@@ -35,7 +35,7 @@ const Table = ({ data, columns }: TableProps<Application>) => {
   })
 
   const getCellClasses = <TValue,>(columnDef: ColumnDef<Application, TValue>) => {
-    const baseClasses = "border group relative"
+    const baseClasses = "border"
     const metaClasses = columnDef.meta?.className || ""
 
     // Se for editável, não adiciona padding (o input vai ter)
@@ -136,7 +136,7 @@ const Table = ({ data, columns }: TableProps<Application>) => {
                     }
                   }}
                 >
-                  {cell.column.id === "index" && hoveredCell === cell.id && (
+                  {cell.column.id === "index" && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
@@ -144,7 +144,7 @@ const Table = ({ data, columns }: TableProps<Application>) => {
                         setHoveredCell(null)
                       }}
                       type="button"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-red-500"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-red-500 cursor-pointer select-none hidden group-hover:inline-flex hover:inline-flex"
                     >
                       Delete
                     </button>
