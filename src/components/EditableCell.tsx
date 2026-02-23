@@ -15,7 +15,7 @@ interface EditableCellProps {
 
 type Company = { id: number; name: string }
 
-export function EditableCell({ initialValue, applicationId, field }: EditableCellProps) {
+export const EditableCell = ({ initialValue, applicationId, field }: EditableCellProps) => {
   const [value, setValue] = useState(initialValue)
   const debouncedValue = useDebouncedValue(value, 300)
   const skipSaveRef = useRef(false)
@@ -50,7 +50,7 @@ export function EditableCell({ initialValue, applicationId, field }: EditableCel
     return res.data
   }
 
-  const { data: companies } = useQuery({
+  const { data: companies, isFetching } = useQuery({
     queryKey: ["companies", searchQuery],
     queryFn: () => fetchCompanies(searchQuery),
     enabled: openDropdown && field === "company", // a query só é ativada quando o dropdown está aberto e o campo é "company"
@@ -167,17 +167,51 @@ export function EditableCell({ initialValue, applicationId, field }: EditableCel
           {companies &&
             companies.length > 0 &&
             companies.map((c) => (
-              <button
+              <div
                 key={c.id}
-                type="button"
-                className="px-3 py-2 cursor-pointer hover:bg-gray-100 w-full text-left relative flex items-center justify-between"
-                onMouseDown={(e) => {
-                  e.preventDefault()
-                  handleSelectCompany(c)
-                }}
+                className={`flex items-center justify-between hover:bg-gray-100 ${isFetching ? "opacity-50" : ""}`}
               >
-                {c.name}
-              </button>
+                <button
+                  type="button"
+                  className="px-3 py-2 cursor-pointer text-left flex-1"
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                    handleSelectCompany(c)
+                  }}
+                >
+                  {c.name}
+                </button>
+
+                <Link
+                  to="/company/$id"
+                  params={{ id: c.id }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2 py-1 mr-2 text-xs text-gray-400 hover:text-blue-600 rounded hover:bg-gray-200"
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                  }}
+                >
+                  Go
+                </Link>
+                {/* <a
+                  href={`/company/${c.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2 py-1 mr-2 text-xs text-gray-400 hover:text-blue-600 rounded hover:bg-gray-200"
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                  }}
+                >
+                  Go
+                </a> */}
+              </div>
             ))}
         </div>
       )}

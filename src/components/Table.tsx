@@ -24,7 +24,7 @@ declare module "@tanstack/react-table" {
   }
 }
 
-export default function Table({ data, columns }: TableProps<Application>) {
+const Table = ({ data, columns }: TableProps<Application>) => {
   const [hoveredCell, setHoveredCell] = useState<string | null>(null)
   const { deleteWithConfirmation } = useDeleteApplication()
 
@@ -159,3 +159,5 @@ export default function Table({ data, columns }: TableProps<Application>) {
     </div>
   )
 }
+
+export default Table

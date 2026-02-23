@@ -1,6 +1,6 @@
 import { Outlet } from "@tanstack/react-router"
 
-function App() {
+const App = () => {
   return <Outlet />
 }
 

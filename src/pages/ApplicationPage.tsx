@@ -4,7 +4,7 @@ import { apiClient } from "../api/client"
 import { useDeleteApplication } from "../hooks/useDelApplication"
 import type { Application } from "../types"
 
-export default function ApplicationPage() {
+const ApplicationPage = () => {
   const { id } = useParams({ from: "/application/$id" })
   const { deleteWithConfirmation, isPending } = useDeleteApplication()
   const navigate = useNavigate()
@@ -35,3 +35,5 @@ export default function ApplicationPage() {
     </>
   )
 }
+
+export default ApplicationPage

@@ -1,9 +1,10 @@
 import { createRootRoute, createRoute } from "@tanstack/react-router"
 import App from "../App"
 import ApplicationPage from "../pages/ApplicationPage"
-import { HomePage } from "../pages/HomePage"
-import { MyApplicationsPage } from "../pages/MyApplicationsPage"
-import { NotFoundPage } from "../pages/NotFoundPage"
+import CompanyPage from "../pages/CompanyPage"
+import HomePage from "../pages/HomePage"
+import MyApplicationsPage from "../pages/MyApplicationsPage"
+import NotFoundPage from "../pages/NotFoundPage"
 
 export const rootRoute = createRootRoute({
   component: App,
@@ -28,6 +29,17 @@ const applicationRoute = createRoute({
   component: ApplicationPage,
 })
 
-const routeTree = rootRoute.addChildren([indexRoute, myApplicationsRoute, applicationRoute])
+const companyRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/company/$id",
+  component: CompanyPage,
+})
+
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  myApplicationsRoute,
+  applicationRoute,
+  companyRoute,
+])
 
 export { routeTree }

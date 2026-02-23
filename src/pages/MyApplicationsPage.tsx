@@ -66,7 +66,7 @@ const columns = [
   }),
 ]
 
-export function MyApplicationsPage() {
+const MyApplicationsPage = () => {
   const getApplications = async (): Promise<Application[]> => {
     const res = await apiClient.get("/applications")
     console.log("Fetched applications:", res.data)
@@ -91,3 +91,5 @@ export function MyApplicationsPage() {
     </div>
   )
 }
+
+export default MyApplicationsPage
