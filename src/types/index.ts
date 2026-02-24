@@ -1,5 +1,5 @@
 export type Application = {
-  id: string
+  id: number
   position: string
   status: "applied" | "interview" | "offer" | "rejected"
   applicationDate: string

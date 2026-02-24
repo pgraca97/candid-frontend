@@ -5,6 +5,7 @@ import { apiClient } from "../api/client"
 import { EditableCell } from "../components/EditableCell"
 import Table from "../components/Table"
 import type { Application } from "../types"
+import RowActions from "../components/RowActions"
 
 const columnHelper = createColumnHelper<Application>()
 
@@ -14,15 +15,23 @@ const columns = [
   columnHelper.display({
     id: "index",
     header: "",
-    cell: (info) => info.row.index + 1,
-    meta: {
-      className: "group relative w-12",
+    cell: (info) => {
+      console.log(typeof info.row.original.id)
+      return (
+        <RowActions
+          index={info.row.index + 1}
+          applicationId={info.row.original.id}
+        />
+      )
     },
+    // meta: {
+    //   className: "group relative w-12",
+    // },
   }),
   columnHelper.accessor("company", {
     header: "Company",
     cell: (info) => {
-      console.log(info.cell)
+      // console.log(info.cell)
       return (
         <EditableCell
           initialValue={info.getValue().name}

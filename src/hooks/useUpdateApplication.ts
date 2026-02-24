@@ -12,7 +12,7 @@ export function useUpdateApplication() {
       id,
       data,
     }: {
-      id: string
+      id: number
       data: Partial<Omit<Application, "id" | "createdAt" | "updatedAt">>
     }) => {
       const response = await apiClient.patch(`/applications/${id}`, data)

@@ -8,7 +8,7 @@ export function useDeleteApplication() {
   const mutation = useMutation({
     // Mutation para apagar a application
     // e conseguir invalidar a cache
-    mutationFn: async (applicationId: string) => {
+    mutationFn: async (applicationId: number) => {
       await apiClient.delete(`/applications/${applicationId}`)
     },
     // onMutate executa ANTES da mutation
@@ -41,7 +41,7 @@ export function useDeleteApplication() {
     },
   })
 
-  const deleteWithConfirmation = (id: string, onSuccess?: () => void) => {
+  const deleteWithConfirmation = (id: number, onSuccess?: () => void) => {
     const confirmed = window.confirm("Are you sure?") // Melhorar isto depois
     if (confirmed) {
       mutation.mutate(id, { onSuccess })

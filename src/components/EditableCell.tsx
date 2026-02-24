@@ -8,7 +8,7 @@ import type { Application } from "../types"
 
 interface EditableCellProps {
   initialValue: string
-  applicationId: string
+  applicationId: number
   companyId?: number
   field: keyof Pick<Application, "company" | "position" | "notes">
 }
@@ -197,20 +197,6 @@ export const EditableCell = ({ initialValue, applicationId, field }: EditableCel
                 >
                   Go
                 </Link>
-                {/* <a
-                  href={`/company/${c.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-2 py-1 mr-2 text-xs text-gray-400 hover:text-blue-600 rounded hover:bg-gray-200"
-                  onMouseDown={(e) => {
-                    e.preventDefault()
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                  }}
-                >
-                  Go
-                </a> */}
               </div>
             ))}
         </div>

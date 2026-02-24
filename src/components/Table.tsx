@@ -136,19 +136,7 @@ const Table = ({ data, columns }: TableProps<Application>) => {
                     }
                   }}
                 >
-                  {cell.column.id === "index" && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        deleteWithConfirmation(row.original.id)
-                        setHoveredCell(null)
-                      }}
-                      type="button"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-red-500 cursor-pointer select-none hidden group-hover:inline-flex hover:inline-flex"
-                    >
-                      Delete
-                    </button>
-                  )}
+
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
