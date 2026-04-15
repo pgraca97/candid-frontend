@@ -3,7 +3,9 @@ import { Link } from "@tanstack/react-router"
 import { useEffect, useRef, useState } from "react"
 import { apiClient } from "../api/client"
 import { useDebouncedValue } from "../hooks/useDebouncedValue"
+import { usePopover } from "../hooks/usePopover"
 import { useUpdateApplication } from "../hooks/useUpdateApplication"
+import Portal from "./Portal"
 import type { Application } from "../types"
 
 interface EditableCellProps {
@@ -20,8 +22,17 @@ export const EditableCell = ({ initialValue, applicationId, field }: EditableCel
   const debouncedValue = useDebouncedValue(value, 300)
   const skipSaveRef = useRef(false)
   const inputRef = useRef<HTMLInputElement>(null)
-  const [openDropdown, setOpenDropdown] = useState(false)
+  // const [openDropdown, setOpenDropdown] = useState(false)
   const { mutate, isPending } = useUpdateApplication()
+
+  const {
+    isOpen: openDropdown,
+    open: openDrop,
+    close: closeDrop,
+    setReference,
+    setFloating,
+    floatingStyles,
+  } = usePopover({ placement: "bottom-start" })
 
   // If value matches what's already saved, no filter needed — show all.
   // If value is empty, also show all — and skip the debounce.
@@ -59,7 +70,7 @@ export const EditableCell = ({ initialValue, applicationId, field }: EditableCel
 
   const handleOpenDropdown = async () => {
     if (field !== "company") return
-    setOpenDropdown(true)
+    openDrop()
   }
 
   const handleCancel = () => {
@@ -70,7 +81,7 @@ export const EditableCell = ({ initialValue, applicationId, field }: EditableCel
     if (e.key === "Enter") handleSave()
     if (e.key === "Escape") {
       skipSaveRef.current = true
-      setOpenDropdown(false)
+      closeDrop()
       handleCancel()
       e.currentTarget.blur()
     }
@@ -78,7 +89,7 @@ export const EditableCell = ({ initialValue, applicationId, field }: EditableCel
 
   const handleSelectCompany = (company: Company) => {
     setValue(company.name)
-    setOpenDropdown(false)
+    closeDrop()
     // inputRef.current?.focus()
 
     // Dar save imediato ao selecionar uma empresa da dropdown
@@ -91,7 +102,7 @@ export const EditableCell = ({ initialValue, applicationId, field }: EditableCel
   }
 
   const handleCreateCompany = () => {
-    setOpenDropdown(false)
+    closeDrop()
     inputRef.current?.focus()
   }
 
@@ -112,7 +123,7 @@ export const EditableCell = ({ initialValue, applicationId, field }: EditableCel
     // On blur, revertemos sempre para o valor inicial
     if (field === "company") {
       setValue(initialValue)
-      setOpenDropdown(false)
+      closeDrop()
       return
     }
 
@@ -122,14 +133,29 @@ export const EditableCell = ({ initialValue, applicationId, field }: EditableCel
     }
   }
 
+  // Callback ref que liga DOIS refs ao mesmo input:
+  // 1. inputRef - para a lógica de blur/focus local
+  // 2. setReference - para o Floating UI saber a posição do trigger
+  //
+  // Quando um elemento precisa de dois refs, não posso simplesmente
+  // fazer ref={inputRef} ref={setReference} - JSX só aceita um ref.
+  const mergeInputRefs = (node: HTMLInputElement | null) => {
+    inputRef.current = node
+    if (field === "company") {
+      setReference(node)
+    }
+  }
+
   return (
     <>
       <input
-        ref={inputRef}
+        ref={mergeInputRefs}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onBlur={() => {
-          setOpenDropdown((prev) => (prev ? false : prev))
+          // O click outside do usePopover já fecha o dropdown
+          // mas aqui garantimos que o save também acontece
+          closeDrop()
           handleSave()
         }}
         onFocus={handleOpenDropdown}
@@ -150,56 +176,62 @@ export const EditableCell = ({ initialValue, applicationId, field }: EditableCel
       )}
 
       {field === "company" && openDropdown && (
-        <div className="absolute left-0 right-0 mt-1 max-h-56 overflow-auto rounded border border-gray-200 bg-white shadow z-10">
-          {showCreateOption && (
-            <button
-              type="button"
-              className="px-3 py-2 cursor-pointer hover:bg-gray-100 w-full text-left border-t border-gray-200 text-blue-600"
-              onMouseDown={(e) => {
-                e.preventDefault()
-                handleCreateCompany()
-              }}
-            >
-              + Criar company: "{value.trim()}"
-            </button>
-          )}
-
-          {companies &&
-            companies.length > 0 &&
-            companies.map((c) => (
-              <div
-                key={c.id}
-                className={`flex items-center justify-between hover:bg-gray-100 ${isFetching ? "opacity-50" : ""}`}
+        <Portal>
+          <div
+            ref={setFloating}
+            style={floatingStyles}
+            className="max-h-56 overflow-auto rounded border 
+                       border-gray-200 bg-white shadow z-50"
+          >
+            {showCreateOption && (
+              <button
+                type="button"
+                className="px-3 py-2 cursor-pointer hover:bg-gray-100 
+                           w-full text-left border-t border-gray-200 text-blue-600"
+                onMouseDown={(e) => {
+                  e.preventDefault()
+                  handleCreateCompany()
+                }}
               >
-                <button
-                  type="button"
-                  className="px-3 py-2 cursor-pointer text-left flex-1"
-                  onMouseDown={(e) => {
-                    e.preventDefault()
-                    handleSelectCompany(c)
-                  }}
-                >
-                  {c.name}
-                </button>
+                + Criar company: &quot;{value.trim()}&quot;
+              </button>
+            )}
 
-                <Link
-                  to="/company/$id"
-                  params={{ id: c.id }}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-2 py-1 mr-2 text-xs text-gray-400 hover:text-blue-600 rounded hover:bg-gray-200"
-                  onMouseDown={(e) => {
-                    e.preventDefault()
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                  }}
+            {companies &&
+              companies.length > 0 &&
+              companies.map((c) => (
+                <div
+                  key={c.id}
+                  className={`flex items-center justify-between hover:bg-gray-100 
+                              ${isFetching ? "opacity-50" : ""}`}
                 >
-                  Go
-                </Link>
-              </div>
-            ))}
-        </div>
+                  <button
+                    type="button"
+                    className="px-3 py-2 cursor-pointer text-left flex-1"
+                    onMouseDown={(e) => {
+                      e.preventDefault()
+                      handleSelectCompany(c)
+                    }}
+                  >
+                    {c.name}
+                  </button>
+
+                  <Link
+                    to="/company/$id"
+                    params={{ id: c.id }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2 py-1 mr-2 text-xs text-gray-400 
+                               hover:text-blue-600 rounded hover:bg-gray-200"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Go
+                  </Link>
+                </div>
+              ))}
+          </div>
+        </Portal>
       )}
     </>
   )

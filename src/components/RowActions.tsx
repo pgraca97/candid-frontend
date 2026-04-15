@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+
 import { useDeleteApplication } from "../hooks/useDelApplication"
-import { createPortal } from 'react-dom'
+import { usePopover } from "../hooks/usePopover"
+import Portal from './Portal'
 
 interface RowActionsProps {
   index: number
@@ -9,47 +10,46 @@ interface RowActionsProps {
 
 const RowActions = ({ index, applicationId }: RowActionsProps) => {
   const { deleteWithConfirmation } = useDeleteApplication()
-  const [open, setOpen] = useState(false)
+  const { isOpen, toggle, close, setReference, setFloating, floatingStyles } = usePopover({ placement: "bottom-end" })
 
   return (
     <div className='relative group w-12'>
+      {/* Trigger - o ref do setReference liga este botão ao Floating UI para ele saber a posição de referência */}
       <button
+        ref={setReference}
         onClick={(e) => {
           e.stopPropagation()
-          console.log('click');
-          setOpen((prev) => !prev)
+          toggle()
         }}
         type="button"
-        className="absolute right-0 top-1/2 -translate-y-1/2 border aspect-square w-4 cursor-pointer select-none hidden group-hover:inline-flex hover:inline-flex"
+        className={`absolute right-0 top-1/2 -translate-y-1/2 
+                    border aspect-square w-4 cursor-pointer select-none 
+                    ${isOpen ? "inline-flex" : "hidden group-hover:inline-flex"}`}
       >
         ...
       </button>
-      {/* <button
-        onClick={(e) => {
-          e.stopPropagation()
-          deleteWithConfirmation(String(applicationId))
-        }}
-        type="button"
-        className="absolute right-2 top-1/2 -translate-y-1/2 text-red-500 cursor-pointer select-none hidden group-hover:inline-flex hover:inline-flex"
-      >
-        Delete
-      </button> */}
-
       {index}
-      {open && createPortal(
-        <div className="absolute right-0  max-h-56 overflow-auto rounded border border-gray-200 bg-white shadow z-10">
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              deleteWithConfirmation(applicationId)
-            }}
-            type="button"
-            className="text-red-500 cursor-pointer select-none"
+      {isOpen && (
+        <Portal>
+          <div
+            ref={setFloating}
+            style={floatingStyles}
+            className='rounded border border-gray-200 bg-white shadow-lg z-50'
           >
-            Delete
-          </button>
-        </div>,
-        document.body
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                deleteWithConfirmation(applicationId)
+                close()
+              }}
+              type="button"
+              className="px-3 py-2 text-red-500 hover:bg-gray-100 
+                         cursor-pointer w-full text-left"
+            >
+              Delete
+            </button>
+          </div>
+        </Portal>
       )}
     </div>
   )
