@@ -22,13 +22,13 @@ const RowActions = ({ index, applicationId }: RowActionsProps) => {
           toggle()
         }}
         type="button"
-        className={`absolute right-0 top-1/2 -translate-y-1/2 
-                    border aspect-square w-4 cursor-pointer select-none 
-                    ${isOpen ? "inline-flex" : "hidden group-hover:inline-flex"}`}
+        className={`absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer select-none aspect-square w-4 h-4 p-0 border ${isOpen ? "inline-flex " : "hidden group-hover:inline-flex"} items-center justify-center`}
+        aria-label="Abrir ações"
+        aria-expanded={isOpen}
       >
-        ...
+        <span className="block -translate-y-1 leading-none text-xs">&hellip;</span>
       </button>
-      {index}
+      <span className="select-none">{index} </span>
       {isOpen && (
         <Portal>
           <div

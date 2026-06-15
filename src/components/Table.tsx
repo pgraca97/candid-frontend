@@ -5,8 +5,6 @@ import {
   type RowData,
   useReactTable,
 } from "@tanstack/react-table"
-import { useState } from "react"
-import { useDeleteApplication } from "../hooks/useDelApplication"
 import type { Application } from "../types"
 
 interface TableProps<TData> {
@@ -25,8 +23,8 @@ declare module "@tanstack/react-table" {
 }
 
 const Table = ({ data, columns }: TableProps<Application>) => {
-  const [hoveredCell, setHoveredCell] = useState<string | null>(null)
-  const { deleteWithConfirmation } = useDeleteApplication()
+  // const [hoveredCell, setHoveredCell] = useState<string | null>(null)
+  // const { deleteWithConfirmation } = useDeleteApplication()
 
   const table = useReactTable({
     data: data || [],
@@ -130,11 +128,11 @@ const Table = ({ data, columns }: TableProps<Application>) => {
                       }
                     }
                   }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      setHoveredCell(null)
-                    }
-                  }}
+                  // onKeyDown={(e) => {
+                  //   if (e.key === "Enter" || e.key === " ") {
+                  //     setHoveredCell(null)
+                  //   }
+                  // }}
                 >
 
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
