@@ -1,57 +1,39 @@
-# React Vite Starter
+# Candid
 
-React template with TypeScript, React Router, TanStack Query, Axios, Tailwind CSS, and Biome.
+> Early work in progress. Started in January 2026, paused since June 2026.
 
-## Project Structure
-```
-src/
-├── api/          # Axios setup and API endpoints
-├── components/   # Reusable UI components
-├── hooks/        # Custom React hooks
-├── pages/        # Route components
-├── types/        # TypeScript type definitions
-├── utils/        # Helper functions
-├── App.tsx       # Router setup
-└── main.tsx      # App entry point
-```
+A job application tracker that works like a spreadsheet: your applications live in one table, and you edit them in place.
 
-## Setup
+API: [candid-api](https://github.com/pgraca97/candid-api)
 
-1. Use this template or clone:
+## What works so far
+
+- **Applications table** built with TanStack Table: company, position, status, a word count of the notes and the application date.
+- **Company editing in place.** As you type in the company cell, a dropdown suggests existing companies (debounced search, 300 ms). Enter saves, Escape cancels.
+- **Optimistic updates.** Edits and deletions show up at once and roll back if the API call fails (TanStack Query `onMutate` and `onError`).
+- **Row actions** in a popover positioned with Floating UI and rendered in a portal, so the table never clips it.
+
+The application and company detail pages only fetch their data so far.
+
+## Tech stack
+
+React 19, TypeScript, Vite, TanStack Router, TanStack Query, TanStack Table, Floating UI, Tailwind CSS 4, Axios and Biome.
+
+## How to run
+
+Requires Node 22+, pnpm and the [API](https://github.com/pgraca97/candid-api) running locally.
+
 ```bash
-   git clone https://github.com/YOUR_USERNAME/react-vite-starter.git
-   cd react-vite-starter
+pnpm install
+cp .env.example .env
+pnpm dev
 ```
 
-2. Install dependencies:
-```bash
-   pnpm install
-```
+`VITE_API_URL` in `.env` points to the API (`http://localhost:3000/api` by default).
 
-3. Copy environment file:
-```bash
-   cp .env.example .env
-```
+## Next steps
 
-4. Start development server:
-```bash
-   pnpm dev
-```
-
-## Available Scripts
-
-- `pnpm dev` - Start development server
-- `pnpm build` - Build for production
-- `pnpm preview` - Preview production build
-- `pnpm check` - Run Biome checks
-- `pnpm check:write` - Fix issues automatically
-- `pnpm format` - Format code
-- `pnpm lint` - Lint code
-
-## VS Code
-
-Recommended extensions are listed in `.vscode/extensions.json`. Install them when prompted.
-
-## License
-
-MIT
+- Detail pages for applications and companies
+- Create applications from the UI
+- Tests with Vitest and Testing Library
+- Deploy (Vercel for the frontend, Railway for the API and database)
